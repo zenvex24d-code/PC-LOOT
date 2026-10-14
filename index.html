@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -53,6 +52,18 @@ header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0
 .info{margin:25px 0;background:white;border:1px solid var(--line);padding:16px;border-radius:14px;font-size:13px;line-height:1.6}
 .login-notice{display:none;background:#eee9ff;border:1px solid #d8ceff;border-radius:12px;padding:14px;margin:12px 0;font-size:13px}
 .login-notice button{margin-left:8px}
+.account-panel{margin:24px 0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
+.account-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.account-actions button,.order-form button,.history-item button{border:0;border-radius:9px;padding:10px 12px;font-weight:800;cursor:pointer;background:var(--purple);color:#fff}
+.account-actions button.secondary,.history-item button.secondary{background:#eee9ff;color:var(--purple)}
+.history-list{display:grid;gap:8px;margin-top:12px}
+.history-item{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.history-item small{display:block;color:var(--muted);margin-top:4px}
+.order-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.order-form input,.order-form select{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+.order-form button{grid-column:1/-1}
+.account-hint{font-size:12px;color:var(--muted);line-height:1.5}
+@media(max-width:520px){.order-form{grid-template-columns:1fr}.order-form button{grid-column:auto}}
 footer{background:#11183e;color:white;padding:24px;text-align:center;margin-top:30px}
 @media(max-width:750px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.top{gap:8px}.search{order:3;flex-basis:100%}.auth-area{margin-left:auto}.hero{padding:22px}.sectionhead h2{font-size:18px}}
 @media(max-width:380px){.stores{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -120,6 +131,32 @@ footer{background:#11183e;color:white;padding:24px;text-align:center;margin-top:
 
 <div class="grid" id="productGrid"></div>
 <div class="empty" id="empty">No products match your search.</div>
+
+<section class="account-panel" id="myAccount">
+  <div class="sectionhead" style="margin-top:0"><div><h2>👤 My Account</h2><p>Sign in to view your private shopping records.</p></div></div>
+  <p id="accountMessage" class="account-hint">Please sign in with Google to use your shopping history.</p>
+  <div class="account-actions">
+    <button type="button" id="showOrdersBtn">My Shopping History</button>
+    <button type="button" id="showClicksBtn" class="secondary">My Shopping Clicks</button>
+  </div>
+  <div id="ordersPanel" hidden>
+    <h3>Add a purchased item</h3>
+    <p class="account-hint">Orders are entered manually and are not verified by the store.</p>
+    <form id="orderForm" class="order-form">
+      <input id="orderName" maxlength="120" placeholder="Product name" required>
+      <input id="orderPrice" maxlength="30" placeholder="Price (e.g. ₹1,299)" required>
+      <select id="orderStore" required><option value="">Choose store</option><option>Myntra</option><option>Meesho</option><option>Shopsy</option><option>AJIO</option><option>Nykaa</option><option>Amazon</option><option>Flipkart</option><option>Other</option></select>
+      <input id="orderDate" type="date" required>
+      <select id="orderStatus"><option>Ordered</option><option>Delivered</option><option>Cancelled</option><option>Returned</option></select>
+      <button type="submit">＋ Save purchased item</button>
+    </form>
+    <div id="ordersList" class="history-list"></div>
+  </div>
+  <div id="clicksPanel" hidden>
+    <h3>Products you viewed</h3>
+    <div id="clicksList" class="history-list"></div>
+  </div>
+</section>
 
 <section class="info">
 <strong>Affiliate disclosure:</strong> PC LOOT may earn a commission through eligible affiliate links at no extra cost to you.
@@ -219,7 +256,10 @@ const list=products.filter(p=>
 (p.name+" "+p.store+" "+p.cat).toLowerCase().includes(searchText.toLowerCase())
 );
 const product=list[Number(btn.dataset.product)];
-if(product&&product.url)window.open(product.url,"_blank","noopener,noreferrer");
+if(product&&product.url){
+ window.open(product.url,"_blank","noopener,noreferrer");
+ if(window.pcLootRecordClick)window.pcLootRecordClick(product);
+}
 });
 
 window.pcLootRefresh=render;
@@ -232,6 +272,9 @@ import {
 getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,
 getRedirectResult,signOut,onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+import {
+getFirestore,collection,addDoc,getDocs,deleteDoc,doc,query,orderBy,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyCk2nero0U0C9xr0DBj9vkhqY7BYmbg3BsQ",
@@ -245,7 +288,54 @@ measurementId:"G-XCZC6QEBL0"
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
+const db=getFirestore(app);
 const provider=new GoogleAuthProvider();
+let currentUser=null;
+let activeHistory="orders";
+const ordersPanel=document.getElementById("ordersPanel");
+const clicksPanel=document.getElementById("clicksPanel");
+const accountMessage=document.getElementById("accountMessage");
+const ordersList=document.getElementById("ordersList");
+const clicksList=document.getElementById("clicksList");
+const dateInput=document.getElementById("orderDate");
+dateInput.value=new Date().toISOString().slice(0,10);
+
+function safeText(value){return String(value??"");}
+function showHistory(which){
+ activeHistory=which;
+ ordersPanel.hidden=which!=="orders";
+ clicksPanel.hidden=which!=="clicks";
+ document.getElementById("showOrdersBtn").classList.toggle("secondary",which!=="orders");
+ document.getElementById("showClicksBtn").classList.toggle("secondary",which!=="clicks");
+ if(!currentUser){accountMessage.textContent="Please sign in with Google to use your shopping history.";return;}
+ accountMessage.textContent="Signed in as "+(currentUser.email||currentUser.displayName||"your Google account")+". These records are private to your account.";
+ loadHistory(which);
+}
+async function loadHistory(which){
+ if(!currentUser)return;
+ const target=which==="orders"?ordersList:clicksList;
+ target.innerHTML="<p class='account-hint'>Loading...</p>";
+ try{
+  const ref=collection(db,"users",currentUser.uid,which);
+  const snap=await getDocs(query(ref,orderBy("createdAt","desc")));
+  if(snap.empty){target.innerHTML="<p class='account-hint'>No records yet.</p>";return;}
+  target.innerHTML="";
+  snap.forEach(item=>{
+   const d=item.data();
+   const title=which==="orders"?safeText(d.name):safeText(d.productName);
+   const detail=which==="orders"?`${safeText(d.store)} · ${safeText(d.price)} · ${safeText(d.date)} · ${safeText(d.status)}`:`${safeText(d.store)} · ${safeText(d.clickedAtText)}`;
+   const row=document.createElement("div");row.className="history-item";
+   const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=title;const small=document.createElement("small");small.textContent=detail;info.append(strong,small);
+   const del=document.createElement("button");del.type="button";del.className="secondary";del.textContent="Delete";del.addEventListener("click",async()=>{if(!confirm("Delete this record?"))return;try{await deleteDoc(doc(db,"users",currentUser.uid,which,item.id));loadHistory(which);}catch(e){alert("Could not delete record. Please try again.");}});
+   row.append(info,del);target.append(row);
+  });
+ }catch(error){console.error(error);target.innerHTML="<p class='account-hint'>Could not load records. Check your internet connection and Firestore rules, then refresh.</p>";}
+}
+window.pcLootRecordClick=async function(product){
+ if(!currentUser||!product)return;
+ try{await addDoc(collection(db,"users",currentUser.uid,"clicks"),{productName:product.name,store:product.store,url:product.url,clickedAtText:new Date().toLocaleString(),createdAt:serverTimestamp()});}
+ catch(error){console.error("Click history save failed",error);}
+};
 const loginBtn=document.getElementById("loginBtn");
 const logoutBtn=document.getElementById("logoutBtn");
 const userLabel=document.getElementById("userLabel");
@@ -274,6 +364,26 @@ loginBtn.textContent="Continue with Google";
 
 loginBtn.addEventListener("click",login);
 document.getElementById("noticeLogin").addEventListener("click",login);
+document.getElementById("showOrdersBtn").addEventListener("click",()=>showHistory("orders"));
+document.getElementById("showClicksBtn").addEventListener("click",()=>showHistory("clicks"));
+document.getElementById("orderForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if(!currentUser){alert("Please sign in with Google first.");return;}
+ const submit=e.currentTarget.querySelector("button[type=submit]");submit.disabled=true;submit.textContent="Saving...";
+ try{
+  await addDoc(collection(db,"users",currentUser.uid,"orders"),{
+   name:document.getElementById("orderName").value.trim(),
+   price:document.getElementById("orderPrice").value.trim(),
+   store:document.getElementById("orderStore").value,
+   date:document.getElementById("orderDate").value,
+   status:document.getElementById("orderStatus").value,
+   createdAt:serverTimestamp()
+  });
+  e.currentTarget.reset();dateInput.value=new Date().toISOString().slice(0,10);
+  showHistory("orders");
+ }catch(error){console.error(error);alert("Could not save item. Check Firestore rules and internet connection.");}
+ finally{submit.disabled=false;submit.textContent="＋ Save purchased item";}
+});
 
 logoutBtn.addEventListener("click",async()=>{
 try{await signOut(auth);}
@@ -285,13 +395,17 @@ alert("Google login failed: "+(error.message||error.code));
 });
 
 onAuthStateChanged(auth,user=>{
+currentUser=user;
 window.pcLootUser=user;
 userLabel.textContent=user?"Hi, "+(user.displayName||user.email||"User"):"";
 loginBtn.hidden=!!user;
 logoutBtn.hidden=!user;
 loginNotice.style.display="none";
+accountMessage.textContent=user?"Signed in. Your history is saved privately to this Google account.":"Please sign in with Google to use your shopping history.";
 if(window.pcLootRefresh)window.pcLootRefresh();
+if(user)showHistory(activeHistory);else{ordersPanel.hidden=true;clicksPanel.hidden=true;ordersList.innerHTML="";clicksList.innerHTML="";}
 });
 </script>
 </body>
 </html>
+
