@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#5125d7">
+<title>PC LOOT — Shop More. Save More.</title>
+<style>
+:root{--purple:#5b2ce2;--purple2:#8b4dff;--navy:#10183e;--ink:#182044;--muted:#66708e;--line:#e8eafd;--bg:#f7f8ff;--green:#159447}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.top{max-width:1200px;margin:auto;padding:13px 18px;display:flex;align-items:center;gap:18px}
+.logo{display:flex;align-items:center;gap:10px;min-width:190px;font-weight:900;font-size:25px;letter-spacing:-1px;color:var(--navy)}.bag{background:linear-gradient(135deg,var(--purple),#a64cff);color:#fff;border-radius:13px;padding:8px;font-size:23px}.logo b{color:var(--purple)}.tag{font-size:11px;letter-spacing:0;color:var(--muted);font-weight:600;display:block;margin-top:-4px}
+.search{flex:1;display:flex;border:1px solid #dfe2f6;background:#f9f9ff;border-radius:30px;padding:5px 7px 5px 15px}.search input{border:0;background:transparent;outline:0;min-width:0;flex:1;font-size:14px}.search button{border:0;border-radius:24px;background:var(--purple);color:white;padding:10px 16px;font-weight:700}
+.headerlinks{white-space:nowrap;font-size:13px;font-weight:700}.headerlinks a{color:var(--ink);text-decoration:none;margin-left:12px}
+.wrap{max-width:1200px;margin:18px auto;padding:0 16px}
+.hero{background:radial-gradient(circle at 80% 10%,#394ce5,transparent 32%),linear-gradient(115deg,#111b55,#4d20ce 65%,#802ce0);border-radius:22px;color:#fff;padding:32px;display:flex;align-items:center;justify-content:space-between;gap:20px;overflow:hidden;box-shadow:0 12px 30px #3520a51c}
+.hero small{background:#ffffff20;border:1px solid #ffffff38;padding:6px 10px;border-radius:30px;font-weight:700}.hero h1{font-size:clamp(27px,4vw,43px);line-height:1.1;margin:16px 0 10px;max-width:600px}.hero p{color:#e7e5ff;max-width:600px;margin:0 0 18px}.hero .cta{display:inline-block;text-decoration:none;background:#fff;color:#4c22cb;padding:12px 20px;border-radius:12px;font-weight:900}.hero-art{font-size:100px;filter:drop-shadow(0 12px 15px #090c452e)}
+.stores{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;margin:16px 0 24px}.store{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 8px;text-align:center;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 4px 15px #17205b05}.store:hover,.store.active{border-color:var(--purple);box-shadow:0 0 0 2px #5b2ce21a}.store span{display:block;font-size:22px;margin-bottom:5px}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:24px 0 12px}.sectionhead h2{margin:0;font-size:22px}.sectionhead p{margin:4px 0 0;color:var(--muted);font-size:13px}.pill{border:1px solid var(--line);border-radius:25px;background:white;padding:8px 12px;color:var(--purple);font-weight:800;cursor:pointer}
+.categories{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px}.cat{background:#fff;border:1px solid var(--line);border-radius:25px;padding:9px 14px;font-weight:700;color:#41496c;cursor:pointer}.cat.active{background:var(--purple);border-color:var(--purple);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.product{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 5px 18px #18205a07;display:flex;flex-direction:column;min-width:0}.prodimg{height:155px;background:linear-gradient(135deg,#f2f0ff,#f9fbff);display:grid;place-items:center;font-size:68px;position:relative}.discount{position:absolute;top:10px;left:10px;background:#e6faed;color:#117d3d;border-radius:7px;padding:5px 7px;font-size:11px;font-weight:900}.prodcontent{padding:13px;display:flex;flex-direction:column;flex:1}.storetag{font-size:11px;font-weight:900;color:var(--purple);text-transform:uppercase;letter-spacing:.3px}.prodcontent h3{font-size:14px;line-height:1.35;margin:7px 0;min-height:38px}.rating{font-size:12px;color:#f2a400}.price{font-size:18px;font-weight:900;margin:7px 0}.old{font-size:12px;color:#9ba2b8;text-decoration:line-through;font-weight:500;margin-left:5px}.note{font-size:11px;color:var(--muted);line-height:1.4;margin:0 0 12px}.buy{display:block;text-align:center;text-decoration:none;color:white;background:linear-gradient(90deg,var(--purple),#853ef0);border-radius:10px;padding:10px 8px;font-weight:900;font-size:13px;margin-top:auto}.buy:hover{filter:brightness(1.07)}.empty{display:none;text-align:center;padding:40px;background:#fff;border-radius:15px;color:var(--muted)}
+.info{margin:26px 0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;color:#58617e;font-size:13px;line-height:1.6}.info strong{color:var(--ink)}footer{background:#11183e;color:#e8eaff;margin-top:34px;padding:24px 16px}.footin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font-size:12px}.footin b{font-size:20px}footer a{color:#fff}
+@media(max-width:900px){.stores{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.logo{min-width:150px}.headerlinks{display:none}.hero-art{font-size:75px}}
+@media(max-width:600px){.top{gap:9px;padding:10px}.logo{min-width:0;font-size:20px}.tag{font-size:9px}.bag{font-size:19px;padding:6px}.search{padding-left:10px}.search input{font-size:12px;width:100px}.search button{padding:9px 11px}.wrap{padding:0 10px;margin-top:12px}.hero{padding:23px 18px;border-radius:17px}.hero-art{font-size:52px}.hero h1{font-size:28px}.hero p{font-size:13px}.stores{gap:7px}.store{padding:11px 3px;font-size:10px}.store span{font-size:19px}.sectionhead h2{font-size:19px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.prodimg{height:125px;font-size:55px}.prodcontent{padding:10px}.prodcontent h3{font-size:13px}.price{font-size:16px}.old{display:block;margin:2px 0 0}.hero-art{display:none}}
+</style>
+</head>
+<body>
+<header><div class="top">
+  <div class="logo"><span class="bag">🛍️</span><div>PC <b>LOOT</b><span class="tag">Shop More. Save More.</span></div></div>
+  <form class="search" id="searchForm"><input id="searchInput" aria-label="Search products" placeholder="Search products, brands and more…"><button type="submit">Search</button></form>
+  <div class="headerlinks"><a href="#deals">🔥 Deals</a><a href="#stores">Stores</a></div>
+</div></header>
+<main class="wrap">
+  <section class="hero"><div><small>✨ YOUR DEALS DESTINATION</small><h1>Shopping aur bhi easy!</h1><p>Amazon, Flipkart, Myntra, Meesho, Shopsy aur aur bhi stores ke deals ek hi jagah.</p><a class="cta" href="#deals">Explore Deals →</a></div><div class="hero-art">🛒💜</div></section>
+  <div class="sectionhead" id="stores"><div><h2>Shop by Store</h2><p>Choose a store to filter products</p></div><button class="pill" id="allStores">All stores</button></div>
+  <div class="stores" id="storeButtons">
+    <button class="store active" data-store="All"><span>🛍️</span>All Stores</button>
+    <button class="store" data-store="Amazon"><span>📦</span>Amazon</button>
+    <button class="store" data-store="Flipkart"><span>🛒</span>Flipkart</button>
+    <button class="store" data-store="Shopsy"><span>💙</span>Shopsy</button>
+    <button class="store" data-store="Meesho"><span>💗</span>Meesho</button>
+    <button class="store" data-store="Myntra"><span>👗</span>Myntra</button>
+    <button class="store" data-store="AJIO"><span>✨</span>AJIO</button>
+    <button class="store" data-store="Nykaa"><span>💄</span>Nykaa</button>
+  </div>
+  <div class="sectionhead"><div><h2>Shop by Category</h2><p>Find what you need</p></div></div>
+  <div class="categories" id="categories">
+    <button class="cat active" data-cat="All">All</button><button class="cat" data-cat="Electronics">📱 Electronics</button><button class="cat" data-cat="Fashion">👕 Fashion</button><button class="cat" data-cat="Home">🏠 Home</button><button class="cat" data-cat="Beauty">💄 Beauty</button><button class="cat" data-cat="Lifestyle">🎧 Lifestyle</button>
+  </div>
+  <div class="sectionhead" id="deals"><div><h2>🔥 Popular Deals</h2><p>Demo products — replace these with your approved affiliate links</p></div><button class="pill" id="clearFilters">Reset filters</button></div>
+  <div class="grid" id="productGrid"></div><div class="empty" id="empty">No products match your search. Try another keyword or reset filters.</div>
+  <section class="info"><strong>Affiliate disclosure:</strong> PC LOOT may earn a commission when you buy through eligible affiliate links, at no extra cost to you. Product details, prices and availability can change; confirm them on the retailer's site.<br><strong>Important:</strong> This is a working demo with sample products and placeholder links. It does not yet contain live retailer inventory or your affiliate IDs. Add your approved affiliate URLs before sharing it publicly.</section>
+</main>
+<footer><div class="footin"><div><b>🛍️ PC LOOT</b><br>Shop More. Save More.</div><div>Home · Stores · Deals · Categories</div><div>Made for smart shoppers 💜</div></div></footer>
+<script>
+const products = [
+ {name:"Wireless Bluetooth Earbuds",store:"Amazon",cat:"Lifestyle",emoji:"🎧",price:"₹1,299",old:"₹2,499",off:"48% OFF",rating:"★★★★☆ 4.2",url:"https://www.amazon.in/"},
+ {name:"Smartphone 5G",store:"Flipkart",cat:"Electronics",emoji:"📱",price:"₹12,999",old:"₹16,999",off:"23% OFF",rating:"★★★★☆ 4.3",url:"https://www.flipkart.com/"},
+ {name:"Everyday Running Shoes",store:"Myntra",cat:"Fashion",emoji:"👟",price:"₹1,499",old:"₹2,999",off:"50% OFF",rating:"★★★★☆ 4.1",url:"https://www.myntra.com/"},
+ {name:"Non-stick Cookware Set",store:"Meesho",cat:"Home",emoji:"🍳",price:"₹899",old:"₹1,499",off:"40% OFF",rating:"★★★★☆ 4.0",url:"https://www.meesho.com/"},
+ {name:"Women's Casual Kurti",store:"Shopsy",cat:"Fashion",emoji:"👗",price:"₹399",old:"₹799",off:"50% OFF",rating:"★★★★☆ 4.1",url:"https://www.shopsy.in/"},
+ {name:"Wireless Headphones",store:"Amazon",cat:"Electronics",emoji:"🎧",price:"₹1,899",old:"₹3,499",off:"46% OFF",rating:"★★★★☆ 4.2",url:"https://www.amazon.in/"},
+ {name:"Smart Watch",store:"Flipkart",cat:"Electronics",emoji:"⌚",price:"₹1,499",old:"₹2,999",off:"50% OFF",rating:"★★★★☆ 4.0",url:"https://www.flipkart.com/"},
+ {name:"Skin Care Gift Set",store:"Nykaa",cat:"Beauty",emoji:"🧴",price:"₹699",old:"₹999",off:"30% OFF",rating:"★★★★☆ 4.3",url:"https://www.nykaa.com/"},
+ {name:"Home Storage Organizer",store:"Meesho",cat:"Home",emoji:"🧺",price:"₹299",old:"₹499",off:"40% OFF",rating:"★★★★☆ 4.0",url:"https://www.meesho.com/"},
+ {name:"Classic Denim Jacket",store:"AJIO",cat:"Fashion",emoji:"🧥",price:"₹1,199",old:"₹2,499",off:"52% OFF",rating:"★★★★☆ 4.2",url:"https://www.ajio.com/"},
+ {name:"Portable Desk Lamp",store:"Amazon",cat:"Home",emoji:"💡",price:"₹549",old:"₹899",off:"39% OFF",rating:"★★★★☆ 4.1",url:"https://www.amazon.in/"},
+ {name:"Everyday Beauty Kit",store:"Nykaa",cat:"Beauty",emoji:"💄",price:"₹499",old:"₹799",off:"38% OFF",rating:"★★★★☆ 4.0",url:"https://www.nykaa.com/"}
+];
+let selectedStore="All", selectedCat="All", searchText="";
+const grid=document.getElementById("productGrid"), empty=document.getElementById("empty");
+function render(){
+ const list=products.filter(p=>(selectedStore==="All"||p.store===selectedStore)&&(selectedCat==="All"||p.cat===selectedCat)&&(p.name+" "+p.store+" "+p.cat).toLowerCase().includes(searchText.toLowerCase()));
+ grid.innerHTML=list.map(p=>`<article class="product"><div class="prodimg"><span class="discount">${p.off}</span>${p.emoji}</div><div class="prodcontent"><div class="storetag">${p.store}</div><h3>${p.name}</h3><div class="rating">${p.rating}</div><div class="price">${p.price}<span class="old">${p.old}</span></div><p class="note">Price and availability may change on store.</p><a class="buy" href="${p.url}" target="_blank" rel="noopener noreferrer" data-store="${p.store}">View deal ↗</a></div></article>`).join("");
+ empty.style.display=list.length?"none":"block";
+ grid.style.display=list.length?"grid":"none";
+}
+document.getElementById("searchForm").addEventListener("submit",e=>{e.preventDefault();searchText=document.getElementById("searchInput").value.trim();render()});
+document.getElementById("searchInput").addEventListener("input",e=>{searchText=e.target.value.trim();render()});
+document.querySelectorAll("[data-store]").forEach(b=>{if(b.classList.contains("store"))b.addEventListener("click",()=>{selectedStore=b.dataset.store;document.querySelectorAll(".store").forEach(x=>x.classList.toggle("active",x===b));render()})});
+document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{selectedCat=b.dataset.cat;document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x===b));render()}));
+function reset(){selectedStore="All";selectedCat="All";searchText="";document.getElementById("searchInput").value="";document.querySelectorAll(".store").forEach(x=>x.classList.toggle("active",x.dataset.store==="All"));document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x.dataset.cat==="All"));render()}
+document.getElementById("clearFilters").addEventListener("click",reset);document.getElementById("allStores").addEventListener("click",reset);
+render();
+</script>
+</body>
+</html>
