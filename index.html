@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -33,6 +34,8 @@ header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0
 .store{text-align:center;font-size:12px}
 .store span{display:block;font-size:21px;margin-bottom:4px}
 .store.active,.cat.active{background:var(--purple);color:white}
+.store:disabled{cursor:not-allowed;opacity:.65;background:#f0f0f5;color:#687087}
+.coming{display:block;font-size:9px;color:#a04c00;margin-top:5px;font-weight:900}
 .categories{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .product{background:white;border:1px solid var(--line);border-radius:15px;overflow:hidden;display:flex;flex-direction:column}
@@ -45,11 +48,14 @@ header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0
 .price{font-size:17px;font-weight:900;margin:7px 0}
 .old{font-size:11px;color:#999;text-decoration:line-through;margin-left:5px}
 .note{font-size:11px;color:var(--muted)}
-.buy{margin-top:auto;text-align:center;background:var(--purple);color:white;text-decoration:none;border-radius:9px;padding:10px;font-weight:800;font-size:13px}
+.buy{display:block;width:100%;margin-top:auto;text-align:center;background:var(--purple);color:white;text-decoration:none;border:0;border-radius:9px;padding:10px;font-weight:800;font-size:13px;cursor:pointer}
 .empty{display:none;background:white;padding:30px;text-align:center}
 .info{margin:25px 0;background:white;border:1px solid var(--line);padding:16px;border-radius:14px;font-size:13px;line-height:1.6}
+.login-notice{display:none;background:#eee9ff;border:1px solid #d8ceff;border-radius:12px;padding:14px;margin:12px 0;font-size:13px}
+.login-notice button{margin-left:8px}
 footer{background:#11183e;color:white;padding:24px;text-align:center;margin-top:30px}
 @media(max-width:750px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.top{gap:8px}.search{order:3;flex-basis:100%}.auth-area{margin-left:auto}.hero{padding:22px}.sectionhead h2{font-size:18px}}
+@media(max-width:380px){.stores{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -72,19 +78,19 @@ footer{background:#11183e;color:white;padding:24px;text-align:center;margin-top:
 <section class="hero">
 <div>✨ YOUR DEALS DESTINATION
 <h1>Shopping aur bhi easy!</h1>
-<p>Amazon, Flipkart, Myntra, Meesho, Shopsy aur aur bhi stores ke deals ek hi jagah.</p>
+<p>Discover deals from your favourite stores, all in one place.</p>
 <a class="cta" href="#deals">Explore Deals →</a>
 </div>
 </section>
 
 <div class="sectionhead" id="stores">
-<div><h2>Shop by Store</h2><p>Choose a store to filter products</p></div>
+<div><h2>Shop by Store</h2><p>Amazon and Flipkart are coming soon!</p></div>
 <button class="pill" id="allStores">All stores</button>
 </div>
 <div class="stores" id="storeButtons">
 <button class="store active" data-store="All"><span>🛍️</span>All Stores</button>
-<button class="store" data-store="Amazon"><span>📦</span>Amazon</button>
-<button class="store" data-store="Flipkart"><span>🛒</span>Flipkart</button>
+<button class="store" data-store="Amazon" disabled><span>📦</span>Amazon<small class="coming">COMING SOON</small></button>
+<button class="store" data-store="Flipkart" disabled><span>🛒</span>Flipkart<small class="coming">COMING SOON</small></button>
 <button class="store" data-store="Shopsy"><span>💙</span>Shopsy</button>
 <button class="store" data-store="Meesho"><span>💗</span>Meesho</button>
 <button class="store" data-store="Myntra"><span>👗</span>Myntra</button>
@@ -103,39 +109,46 @@ footer{background:#11183e;color:white;padding:24px;text-align:center;margin-top:
 </div>
 
 <div class="sectionhead" id="deals">
-<div><h2>🔥 Popular Deals</h2><p>Demo products and sample prices</p></div>
+<div><h2>🔥 Popular Deals</h2><p>Sample products and prices — not live offers</p></div>
 <button class="pill" id="clearFilters">Reset filters</button>
 </div>
+
+<div class="login-notice" id="loginNotice" role="status">
+🔐 Shopping links unlock after Google login.
+<button type="button" class="auth-btn" id="noticeLogin">Login now</button>
+</div>
+
 <div class="grid" id="productGrid"></div>
 <div class="empty" id="empty">No products match your search.</div>
 
 <section class="info">
 <strong>Affiliate disclosure:</strong> PC LOOT may earn a commission through eligible affiliate links at no extra cost to you.
-<strong>Important:</strong> These are demo products and placeholder store links. Prices, ratings and discounts are examples, not live offers. Replace them with verified products and your approved affiliate URLs before promoting the website.
+<strong>Important:</strong> Products, prices, ratings and discounts shown here are examples, not live offers. Store links are placeholders. Replace them with verified product links and approved affiliate URLs before promoting the website.
 </section>
 </main>
 
 <footer>🛍️ <strong>PC LOOT</strong><br>Shop More. Save More. 💜</footer>
 
 <script>
-const products = [
-{name:"Wireless Bluetooth Earbuds",store:"Amazon",cat:"Lifestyle",emoji:"🎧",price:"₹1,299",old:"₹2,499",off:"48% OFF",rating:"★★★★☆ 4.2",url:"https://www.amazon.in/"},
-{name:"Smartphone 5G",store:"Flipkart",cat:"Electronics",emoji:"📱",price:"₹12,999",old:"₹16,999",off:"23% OFF",rating:"★★★★☆ 4.3",url:"https://www.flipkart.com/"},
-{name:"Everyday Running Shoes",store:"Myntra",cat:"Fashion",emoji:"👟",price:"₹1,499",old:"₹2,999",off:"50% OFF",rating:"★★★★☆ 4.1",url:"https://www.myntra.com/"},
-{name:"Non-stick Cookware Set",store:"Meesho",cat:"Home",emoji:"🍳",price:"₹899",old:"₹1,499",off:"40% OFF",rating:"★★★★☆ 4.0",url:"https://www.meesho.com/"},
-{name:"Women's Casual Kurti",store:"Shopsy",cat:"Fashion",emoji:"👗",price:"₹399",old:"₹799",off:"50% OFF",rating:"★★★★☆ 4.1",url:"https://www.shopsy.in/"},
-{name:"Wireless Headphones",store:"Amazon",cat:"Electronics",emoji:"🎧",price:"₹1,899",old:"₹3,499",off:"46% OFF",rating:"★★★★☆ 4.2",url:"https://www.amazon.in/"},
-{name:"Smart Watch",store:"Flipkart",cat:"Electronics",emoji:"⌚",price:"₹1,499",old:"₹2,999",off:"50% OFF",rating:"★★★★☆ 4.0",url:"https://www.flipkart.com/"},
-{name:"Skin Care Gift Set",store:"Nykaa",cat:"Beauty",emoji:"🧴",price:"₹699",old:"₹999",off:"30% OFF",rating:"★★★★☆ 4.3",url:"https://www.nykaa.com/"},
-{name:"Home Storage Organizer",store:"Meesho",cat:"Home",emoji:"🧺",price:"₹299",old:"₹499",off:"40% OFF",rating:"★★★★☆ 4.0",url:"https://www.meesho.com/"},
-{name:"Classic Denim Jacket",store:"AJIO",cat:"Fashion",emoji:"🧥",price:"₹1,199",old:"₹2,499",off:"52% OFF",rating:"★★★★☆ 4.2",url:"https://www.ajio.com/"},
-{name:"Portable Desk Lamp",store:"Amazon",cat:"Home",emoji:"💡",price:"₹549",old:"₹899",off:"39% OFF",rating:"★★★★☆ 4.1",url:"https://www.amazon.in/"},
-{name:"Everyday Beauty Kit",store:"Nykaa",cat:"Beauty",emoji:"💄",price:"₹499",old:"₹799",off:"38% OFF",rating:"★★★★☆ 4.0",url:"https://www.nykaa.com/"}
+const products=[
+{name:"Everyday Running Shoes",store:"Myntra",cat:"Fashion",emoji:"👟",price:"₹1,499",old:"₹2,999",off:"50% OFF",rating:"Sample rating",url:"https://www.myntra.com/"},
+{name:"Non-stick Cookware Set",store:"Meesho",cat:"Home",emoji:"🍳",price:"₹899",old:"₹1,499",off:"40% OFF",rating:"Sample rating",url:"https://www.meesho.com/"},
+{name:"Women's Casual Kurti",store:"Shopsy",cat:"Fashion",emoji:"👗",price:"₹399",old:"₹799",off:"50% OFF",rating:"Sample rating",url:"https://www.shopsy.in/"},
+{name:"Skin Care Gift Set",store:"Nykaa",cat:"Beauty",emoji:"🧴",price:"₹699",old:"₹999",off:"30% OFF",rating:"Sample rating",url:"https://www.nykaa.com/"},
+{name:"Home Storage Organizer",store:"Meesho",cat:"Home",emoji:"🧺",price:"₹299",old:"₹499",off:"40% OFF",rating:"Sample rating",url:"https://www.meesho.com/"},
+{name:"Classic Denim Jacket",store:"AJIO",cat:"Fashion",emoji:"🧥",price:"₹1,199",old:"₹2,499",off:"52% OFF",rating:"Sample rating",url:"https://www.ajio.com/"},
+{name:"Everyday Beauty Kit",store:"Nykaa",cat:"Beauty",emoji:"💄",price:"₹499",old:"₹799",off:"38% OFF",rating:"Sample rating",url:"https://www.nykaa.com/"},
+{name:"Casual Lifestyle Bag",store:"Shopsy",cat:"Lifestyle",emoji:"👜",price:"₹499",old:"₹899",off:"Sample deal",rating:"Sample rating",url:"https://www.shopsy.in/"},
+{name:"Home Table Lamp",store:"Meesho",cat:"Home",emoji:"💡",price:"₹549",old:"₹899",off:"Sample deal",rating:"Sample rating",url:"https://www.meesho.com/"},
+{name:"Fashion Accessories",store:"AJIO",cat:"Lifestyle",emoji:"🕶️",price:"₹399",old:"₹699",off:"Sample deal",rating:"Sample rating",url:"https://www.ajio.com/"}
 ];
 
 let selectedStore="All",selectedCat="All",searchText="";
+window.pcLootUser=null;
+
 const grid=document.getElementById("productGrid");
 const empty=document.getElementById("empty");
+const loginNotice=document.getElementById("loginNotice");
 
 function render(){
 const list=products.filter(p=>
@@ -143,7 +156,8 @@ const list=products.filter(p=>
 (selectedCat==="All"||p.cat===selectedCat)&&
 (p.name+" "+p.store+" "+p.cat).toLowerCase().includes(searchText.toLowerCase())
 );
-grid.innerHTML=list.map(p=>`
+
+grid.innerHTML=list.map((p,i)=>`
 <article class="product">
 <div class="prodimg"><span class="discount">${p.off}</span>${p.emoji}</div>
 <div class="prodcontent">
@@ -151,11 +165,20 @@ grid.innerHTML=list.map(p=>`
 <h3>${p.name}</h3>
 <div class="rating">${p.rating}</div>
 <div class="price">${p.price}<span class="old">${p.old}</span></div>
-<p class="note">Price and availability may change on store.</p>
-<a class="buy" href="${p.url}" target="_blank" rel="noopener noreferrer">View deal ↗</a>
+<p class="note">Demo price. Check the store for current details.</p>
+<button class="buy" type="button" data-product="${i}">🔒 View deal ↗</button>
 </div></article>`).join("");
+
 empty.style.display=list.length?"none":"block";
 grid.style.display=list.length?"grid":"none";
+}
+
+function reset(){
+selectedStore="All";selectedCat="All";searchText="";
+document.getElementById("searchInput").value="";
+document.querySelectorAll(".store").forEach(x=>x.classList.toggle("active",x.dataset.store==="All"));
+document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x.dataset.cat==="All"));
+render();
 }
 
 document.getElementById("searchForm").addEventListener("submit",e=>{
@@ -167,7 +190,7 @@ document.getElementById("searchInput").addEventListener("input",e=>{
 searchText=e.target.value.trim();
 render();
 });
-document.querySelectorAll(".store").forEach(b=>b.addEventListener("click",()=>{
+document.querySelectorAll(".store:not(:disabled)").forEach(b=>b.addEventListener("click",()=>{
 selectedStore=b.dataset.store;
 document.querySelectorAll(".store").forEach(x=>x.classList.toggle("active",x===b));
 render();
@@ -177,15 +200,29 @@ selectedCat=b.dataset.cat;
 document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x===b));
 render();
 }));
-function reset(){
-selectedStore="All";selectedCat="All";searchText="";
-document.getElementById("searchInput").value="";
-document.querySelectorAll(".store").forEach(x=>x.classList.toggle("active",x.dataset.store==="All"));
-document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x.dataset.cat==="All"));
-render();
-}
 document.getElementById("clearFilters").addEventListener("click",reset);
 document.getElementById("allStores").addEventListener("click",reset);
+
+grid.addEventListener("click",e=>{
+const btn=e.target.closest("[data-product]");
+if(!btn)return;
+
+if(!window.pcLootUser){
+loginNotice.style.display="block";
+loginNotice.scrollIntoView({behavior:"smooth",block:"center"});
+return;
+}
+
+const list=products.filter(p=>
+(selectedStore==="All"||p.store===selectedStore)&&
+(selectedCat==="All"||p.cat===selectedCat)&&
+(p.name+" "+p.store+" "+p.cat).toLowerCase().includes(searchText.toLowerCase())
+);
+const product=list[Number(btn.dataset.product)];
+if(product&&product.url)window.open(product.url,"_blank","noopener,noreferrer");
+});
+
+window.pcLootRefresh=render;
 render();
 </script>
 
@@ -197,7 +234,7 @@ getRedirectResult,signOut,onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
 
 const firebaseConfig={
-apiKey:"AIzaSyCk2neroU0C9xr0DBj9vkhqY7BYmbg3BsQ",
+apiKey:"AIzaSyCk2nero0U0C9xr0DBj9vkhqY7BYmbg3BsQ",
 authDomain:"pc-loot.firebaseapp.com",
 projectId:"pc-loot",
 storageBucket:"pc-loot.firebasestorage.app",
@@ -213,15 +250,13 @@ const loginBtn=document.getElementById("loginBtn");
 const logoutBtn=document.getElementById("logoutBtn");
 const userLabel=document.getElementById("userLabel");
 
-loginBtn.addEventListener("click",async()=>{
+async function login(){
 loginBtn.disabled=true;
 loginBtn.textContent="Opening Google...";
 try{
 await signInWithPopup(auth,provider);
 }catch(error){
-if(error.code==="auth/popup-blocked"||
-error.code==="auth/cancelled-popup-request"||
-error.code==="auth/operation-not-supported-in-this-environment"){
+if(["auth/popup-blocked","auth/cancelled-popup-request","auth/operation-not-supported-in-this-environment"].includes(error.code)){
 try{
 await signInWithRedirect(auth,provider);
 return;
@@ -235,7 +270,10 @@ alert("Google login failed: "+(error.message||error.code));
 loginBtn.disabled=false;
 loginBtn.textContent="Continue with Google";
 }
-});
+}
+
+loginBtn.addEventListener("click",login);
+document.getElementById("noticeLogin").addEventListener("click",login);
 
 logoutBtn.addEventListener("click",async()=>{
 try{await signOut(auth);}
@@ -247,17 +285,13 @@ alert("Google login failed: "+(error.message||error.code));
 });
 
 onAuthStateChanged(auth,user=>{
-if(user){
-userLabel.textContent="Hi, "+(user.displayName||user.email||"User");
-loginBtn.hidden=true;
-logoutBtn.hidden=false;
-}else{
-userLabel.textContent="";
-loginBtn.hidden=false;
-logoutBtn.hidden=true;
-}
+window.pcLootUser=user;
+userLabel.textContent=user?"Hi, "+(user.displayName||user.email||"User"):"";
+loginBtn.hidden=!!user;
+logoutBtn.hidden=!user;
+loginNotice.style.display="none";
+if(window.pcLootRefresh)window.pcLootRefresh();
 });
 </script>
 </body>
 </html>
-
